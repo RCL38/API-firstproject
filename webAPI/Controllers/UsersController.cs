@@ -8,7 +8,8 @@ namespace webAPI.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private string filePath = "users.txt";
+        //fix: The path never changes, so it can be readonly
+        private readonly string filePath = "users.txt";
 
         // GET: api/<UsersController>
         [HttpGet]
@@ -55,6 +56,7 @@ namespace webAPI.Controllers
         }
         // POST api/User/login
         [HttpPost("login")]
+        //Two different actions are both called Post. A name that says what it does is clearer here, for example Login
         public IActionResult Post([FromBody] UserLogIn loginUser)
         {
             using (StreamReader reader = System.IO.File.OpenText(filePath))
@@ -72,6 +74,7 @@ namespace webAPI.Controllers
 
         // PUT api/<UsersController>/5
         [HttpPut("{id}")]
+        //Parameters are camelCase with a capital letter for each new word, for example userWithUpdate
         public IActionResult Put(int id, [FromBody] User userwithupdate)
         {
             string textToReplace = string.Empty;
@@ -82,7 +85,11 @@ namespace webAPI.Controllers
                 {
                     User user = JsonSerializer.Deserialize<User>(currentUserInFile);
                     if (user.userId == id)
+                    {
                         textToReplace = currentUserInFile;
+                        //fix: Found- break
+                        break;
+                    }
                 }
             }
 
