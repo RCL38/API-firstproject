@@ -1,3 +1,6 @@
 <Solution>
+  <Project Path="Entities/Entities.csproj" Id="d8e049c8-866d-469f-90ee-6cc7dad3e9d2" />
+  <Project Path="Repository/Repository.csproj" Id="c2b58d9a-a079-42fc-8575-ff56ce2b6b72" />
+  <Project Path="Service/Service.csproj" Id="f8fcb862-92d7-45bd-8339-0961b3292817" />
   <Project Path="webAPI/webAPI.csproj" />
 </Solution>

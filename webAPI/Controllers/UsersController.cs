@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Runtime.CompilerServices;
-using System.Text.Json;
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Entities;
+using Services;
 
 namespace webAPI.Controllers
 {
@@ -9,7 +8,7 @@ namespace webAPI.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private string filePath = "users.txt";
+        private UsersService usersServices = new UsersService();
 
         // GET: api/<UsersController>
         [HttpGet]
@@ -22,20 +21,10 @@ namespace webAPI.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            if (!System.IO.File.Exists(filePath))
+            User? user = usersServices.GetById(id);
+            if (user == null)
                 return NoContent();
-
-            using (StreamReader reader = System.IO.File.OpenText(filePath))
-            {
-                string? currentUserInFile;
-                while ((currentUserInFile = reader.ReadLine()) != null)
-                {
-                    User user = JsonSerializer.Deserialize<User>(currentUserInFile);
-                    if (user.userId == id)
-                        return Ok(user);
-                }
-            }
-            return NoContent();
+            return Ok(user);
         }
 
         // POST api/<UsersController>
@@ -43,59 +32,42 @@ namespace webAPI.Controllers
         public IActionResult Post([FromBody] User user)
         {
             if (user == null)
-            {
                 return BadRequest();
-            }
-            int numberOfUsers = System.IO.File.ReadLines(filePath).Count();
-            user.userId = numberOfUsers + 1;
-            string userJson = JsonSerializer.Serialize(user);
-            System.IO.File.AppendAllText(filePath, userJson + Environment.NewLine);
 
-            
-            return CreatedAtAction(nameof(Get), new { id = user.userId }, user);
+            User? newUser = usersServices.SignUp(user);
+            if (newUser == null)
+                return BadRequest();
+
+            return CreatedAtAction(nameof(Get), new { id = newUser.userId }, newUser);
         }
+
         // POST api/User/login
         [HttpPost("login")]
         public IActionResult Post([FromBody] UserLogIn loginUser)
         {
-            using (StreamReader reader = System.IO.File.OpenText(filePath))
-            {
-                string? currentUserInFile;
-                while ((currentUserInFile = reader.ReadLine()) != null)
-                {
-                    User user = JsonSerializer.Deserialize<User>(currentUserInFile);
-                    if (user.email == loginUser.email && user.password == loginUser.password)
-                        return Ok(user);
-                }
-            }
-            return NoContent();
+            User? user = usersServices.Login(loginUser);
+            if (user == null)
+                return NoContent();
+            return Ok(user);
         }
+
         [HttpPost("password")]
         public IActionResult Post([FromBody] string password)
         {
-            var result = Zxcvbn.Core.EvaluatePassword(password);
-            return Ok(result.Score);
+            return Ok(usersServices.CheckPassword(password));
         }
-
 
         // PUT api/<UsersController>/5
         [HttpPut("{id}")]
         public IActionResult Put(int id, [FromBody] User user)
         {
-            using (StreamReader reader = System.IO.File.OpenText(filePath))
-            {
-                string? currentUserInFile;
-                while ((currentUserInFile = reader.ReadLine()) != null)
-                {
-                    User user1 = JsonSerializer.Deserialize<User>(currentUserInFile);
-                    if (user1.userId == id)
-                    {
-                        System.IO.File.AppendAllText(filePath, user + Environment.NewLine);
-                    }
-                    return Ok(user);
-                }
-            }
-            return NoContent();
+            if (user == null)
+                return BadRequest();
+
+            User? updatedUser = usersServices.Update(id, user);
+            if (updatedUser == null)
+                return NoContent();
+            return Ok(updatedUser);
         }
 
         // DELETE api/<UsersController>/5
