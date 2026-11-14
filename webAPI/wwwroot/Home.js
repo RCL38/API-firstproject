@@ -29,6 +29,7 @@ async function signup() {
 async function signin() {
    
     
+    //In JavaScript, names are camelCase: userName, not UserName
     const UserName = document.querySelector("#UserName").value;
     const Password = document.querySelector("#PasswordIn").value;
 
