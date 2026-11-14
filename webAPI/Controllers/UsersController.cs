@@ -6,6 +6,7 @@ namespace webAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //The assignment asks to split the code into four projects: the API, Entities, Services and Repositories
     public class UsersController : ControllerBase
     {
         private string filePath = "users.txt";

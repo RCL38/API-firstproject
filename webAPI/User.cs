@@ -6,6 +6,7 @@ namespace webAPI
     public class User
     {
         [Required]
+        //In C#, properties are PascalCase (UserId). To keep the data file loading, add [JsonPropertyName] or use PropertyNameCaseInsensitive = true in the JSON options
         public int userId { get; set; }
         [Required]
         public string firstname { get; set; }
