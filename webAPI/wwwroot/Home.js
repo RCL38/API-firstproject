@@ -1,6 +1,14 @@
 
 async function signup() {
-    0;
+
+    const user = {
+        firstname: document.querySelector("#First_Name").value,
+        lastname: document.querySelector("#Last_Name").value,
+        email: document.querySelector("#UserNameUp").value,
+        password: document.querySelector("#PasswordUp").value
+    };
+
+    console.log("Password sent:", user.password);
 
     const response = await fetch('/api/Users', {
         method: 'POST',
@@ -16,6 +24,7 @@ async function signup() {
     else {
         alert("Registration failed");
     }
+
 }
 async function checkPasswordSrtength() {
     const password = document.querySelector("#PasswordUp").value;

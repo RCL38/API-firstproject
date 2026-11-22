@@ -3,9 +3,14 @@ using Repositories;
 
 namespace Services
 {
-    public class UsersService
+    public class UsersService : IUsersService
     {
-        private readonly UsersRepository _repository = new UsersRepository();
+        private readonly IUsersRepository _repository;
+
+        public UsersService(IUsersRepository repository)
+        {
+            _repository = repository;
+        }
 
         public User? SignUp(User user)
         {

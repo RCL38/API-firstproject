@@ -8,7 +8,12 @@ namespace webAPI.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private UsersService usersServices = new UsersService();
+        private readonly IUsersService _usersService;
+
+        public UsersController(IUsersService usersService)
+        {
+            _usersService = usersService;
+        }
 
         // GET: api/<UsersController>
         [HttpGet]
@@ -21,7 +26,7 @@ namespace webAPI.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            User? user = usersServices.GetById(id);
+            User? user = _usersService.GetById(id);
             if (user == null)
                 return NoContent();
             return Ok(user);
@@ -34,7 +39,7 @@ namespace webAPI.Controllers
             if (user == null)
                 return BadRequest();
 
-            User? newUser = usersServices.SignUp(user);
+            User? newUser = _usersService.SignUp(user);
             if (newUser == null)
                 return BadRequest();
 
@@ -45,7 +50,7 @@ namespace webAPI.Controllers
         [HttpPost("login")]
         public IActionResult Post([FromBody] UserLogIn loginUser)
         {
-            User? user = usersServices.Login(loginUser);
+            User? user = _usersService.Login(loginUser);
             if (user == null)
                 return NoContent();
             return Ok(user);
@@ -54,7 +59,7 @@ namespace webAPI.Controllers
         [HttpPost("password")]
         public IActionResult Post([FromBody] string password)
         {
-            return Ok(usersServices.CheckPassword(password));
+            return Ok(_usersService.CheckPassword(password));
         }
 
         // PUT api/<UsersController>/5
@@ -64,7 +69,7 @@ namespace webAPI.Controllers
             if (user == null)
                 return BadRequest();
 
-            User? updatedUser = usersServices.Update(id, user);
+            User? updatedUser = _usersService.Update(id, user);
             if (updatedUser == null)
                 return NoContent();
             return Ok(updatedUser);

@@ -3,7 +3,7 @@ using Entities;
 
 namespace Repositories
 {
-    public class UsersRepository
+    public class UsersRepository : IUsersRepository
     {
         private readonly string _filePath = "users.txt";
 
