@@ -1,4 +1,4 @@
-﻿using Entities;
+﻿using Entity;
 using Repositories;
 
 namespace Services
@@ -12,18 +12,25 @@ namespace Services
             _repository = repository;
         }
 
-        public User? SignUp(User user)
-        {
-            return _repository.AddUser(user);
-        }
 
         public User? Login(UserLogIn loginUser)
         {
             return _repository.Login(loginUser);
         }
 
+        public User? SignUp(User user)
+        {
+            if (CheckPassword(user.Password) > 2)
+                return _repository.AddUser(user);
+
+            return null;
+        }
+
         public User? Update(int id, User updatedUser)
         {
+            if (CheckPassword(updatedUser.Password) < 2)
+                return null;
+
             return _repository.Update(id, updatedUser);
         }
 

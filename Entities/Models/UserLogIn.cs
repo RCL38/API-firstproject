@@ -1,4 +1,4 @@
-﻿namespace Entities
+﻿namespace Entity
 {
     public class UserLogIn
     {

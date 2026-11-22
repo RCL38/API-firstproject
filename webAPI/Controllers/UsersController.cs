@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Entities;
 using Services;
+using Entity;
 
 namespace webAPI.Controllers
 {
@@ -43,7 +43,7 @@ namespace webAPI.Controllers
             if (newUser == null)
                 return BadRequest();
 
-            return CreatedAtAction(nameof(Get), new { id = newUser.userId }, newUser);
+            return CreatedAtAction(nameof(Get), new { id = newUser.Id }, newUser);
         }
 
         // POST api/User/login

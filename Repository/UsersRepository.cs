@@ -1,78 +1,63 @@
-﻿using System.Text.Json;
-using Entities;
+﻿
+using Entity;
+using Repository;
+using System.Text.Json;
 
 namespace Repositories
 {
     public class UsersRepository : IUsersRepository
     {
-        private readonly string _filePath = "users.txt";
+        private readonly storeDBContext _dbContext;
+
+        public UsersRepository(storeDBContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
 
         public User? GetUserById(int id)
         {
-            if (!File.Exists(_filePath))
-                return null;
-
-            List<string> lines = File.ReadAllLines(_filePath).ToList();
-
-            for (int i = 0; i < lines.Count; i++)
-            {
-                User? user = JsonSerializer.Deserialize<User>(lines[i]);
-                if (user != null && user.userId == id)
-                    return user;
-            }
-            return null;
+            return _dbContext.Users.FirstOrDefault(u => u.Id == id);
         }
 
         public User? AddUser(User user)
         {
-            int numberOfUsers = File.Exists(_filePath)
-                ? File.ReadLines(_filePath).Count()
-                : 0;
-
-            user.userId = numberOfUsers + 1;
-            string userJson = JsonSerializer.Serialize(user);
-            File.AppendAllText(_filePath, userJson + Environment.NewLine);
-
+            _dbContext.Users.Add(user);
+            _dbContext.SaveChanges();
             return user;
         }
 
         public User? Login(UserLogIn loginUser)
         {
-            if (!File.Exists(_filePath))
-                return null;
-
-            foreach (string line in File.ReadLines(_filePath))
-            {
-                User? user = JsonSerializer.Deserialize<User>(line);
-                if (user != null && user.email == loginUser.Email && user.password == loginUser.Password)
-                    return user;
-            }
-            return null;
+            return _dbContext.Users.FirstOrDefault(u =>
+                u.Email == loginUser.Email &&
+                u.Password == loginUser.Password);
         }
 
         public User? Update(int id, User updatedUser)
         {
-            if (!File.Exists(_filePath))
+            User? user = _dbContext.Users.FirstOrDefault(u => u.Id == id);
+
+            if (user == null)
                 return null;
 
-            List<string> lines = File.ReadAllLines(_filePath).ToList();
+            user.FirstName = updatedUser.FirstName;
+            user.LastName = updatedUser.LastName;
+            user.Email = updatedUser.Email;
+            user.Password = updatedUser.Password;
 
-            for (int i = 0; i < lines.Count; i++)
-            {
-                User? current = JsonSerializer.Deserialize<User>(lines[i]);
-                if (current != null && current.userId == id)
-                {
-                    updatedUser.userId = id;
-                    lines[i] = JsonSerializer.Serialize(updatedUser);
-                    File.WriteAllLines(_filePath, lines);
-                    return updatedUser;
-                }
-            }
-            return null;
+            _dbContext.SaveChanges();
+            return user;
         }
 
         public void Delete(int id)
         {
+            User? user = _dbContext.Users.FirstOrDefault(u => u.Id == id);
+
+            if (user != null)
+            {
+                _dbContext.Users.Remove(user);
+                _dbContext.SaveChanges();
+            }
         }
     }
 }

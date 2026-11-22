@@ -8,7 +8,6 @@ async function signup() {
         password: document.querySelector("#PasswordUp").value
     };
 
-    console.log("Password sent:", user.password);
 
     const response = await fetch('/api/Users', {
         method: 'POST',
