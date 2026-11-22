@@ -6,6 +6,7 @@ namespace webAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //The assignment asks to split the code into four projects: the API, Entities, Services and Repositories
     public class UsersController : ControllerBase
     {
         private string filePath = "users.txt";
@@ -39,6 +40,7 @@ namespace webAPI.Controllers
 
         // POST api/<UsersController>
         [HttpPost]
+        //The assignment asks POST to reject a weak password (score below 3) with a 400 status: call the password check here before creating the user
         public IActionResult Post([FromBody] User user)
         {
             if (user == null)
@@ -72,6 +74,7 @@ namespace webAPI.Controllers
 
         // PUT api/<UsersController>/5
         [HttpPut("{id}")]
+        //The assignment asks PUT to reject a weak password (score below 3) with a 400 status: call the password check here before updating the user
         public IActionResult Put(int id, [FromBody] User userwithupdate)
         {
             string textToReplace = string.Empty;
