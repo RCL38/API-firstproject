@@ -29,6 +29,7 @@ async function signup() {
 async function signin() {
    
     
+    //In JavaScript, variables are written in camelCase: userName and password, not UserName and Password
     const UserName = document.querySelector("#UserName").value;
     const Password = document.querySelector("#PasswordIn").value;
 

@@ -26,6 +26,7 @@ namespace webAPI.Controllers
 
         // POST api/<UsersController>
         [HttpPost]
+        //The assignment asks this controller to take the password service's interface and call it: where is the password service? It doesn't exist yet, ask where it should be used
         public IActionResult Post([FromBody] string password)
         {
             var results = Zxcvbn.Core.EvaluatePassword(password);
