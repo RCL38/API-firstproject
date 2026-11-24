@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+
 using Services;
 using Entity;
 
@@ -8,9 +9,9 @@ namespace webAPI.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IUsersService _usersService;
+        private readonly IUserService _usersService;
 
-        public UsersController(IUsersService usersService)
+        public UsersController(IUserService usersService)
         {
             _usersService = usersService;
         }
@@ -24,55 +25,47 @@ namespace webAPI.Controllers
 
         // GET api/<UsersController>/5
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            User? user = _usersService.GetById(id);
-            if (user == null)
-                return NoContent();
+
+            User user = await _usersService.GetUserById(id);
+            if (user == null) return NoContent();
             return Ok(user);
         }
 
         // POST api/<UsersController>
         [HttpPost]
-        public IActionResult Post([FromBody] User user)
+        public async Task<ActionResult<User>> Post([FromBody] User user)
         {
-            if (user == null)
-                return BadRequest();
-
-            User? newUser = _usersService.SignUp(user);
-            if (newUser == null)
-                return BadRequest();
-
-            return CreatedAtAction(nameof(Get), new { id = newUser.Id }, newUser);
+            User added = await _usersService.AddUser(user);
+            if (added == null) return BadRequest();
+            return CreatedAtAction(nameof(Get), new { id = added.Id },
+            added);
         }
+
 
         // POST api/User/login
         [HttpPost("login")]
-        public IActionResult Post([FromBody] UserLogIn loginUser)
+        public async Task<ActionResult<User>> Post([FromBody] UserLogIn loginUser)
         {
-            User? user = _usersService.Login(loginUser);
-            if (user == null)
-                return NoContent();
-            return Ok(user);
+            User login = await _usersService.Login(loginUser);
+            if (login == null) return NoContent();
+            return Ok(login);
         }
 
-        [HttpPost("password")]
-        public IActionResult Post([FromBody] string password)
-        {
-            return Ok(_usersService.CheckPassword(password));
-        }
+        //[HttpPost("password")]
+        //public IActionResult Post([FromBody] string password)
+        //{
+        //    return Ok(_usersService.CheckPassword(password));
+        //}
 
         // PUT api/<UsersController>/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] User user)
+        public async Task<IActionResult> Put(int id, [FromBody] User user)
         {
-            if (user == null)
-                return BadRequest();
-
-            User? updatedUser = _usersService.Update(id, user);
-            if (updatedUser == null)
-                return NoContent();
-            return Ok(updatedUser);
+            User update = await _usersService.UpdateUser(id, user);
+            if (update == null) return BadRequest();
+            return Ok(update);
         }
 
         // DELETE api/<UsersController>/5

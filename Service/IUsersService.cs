@@ -5,16 +5,12 @@ using System.Text;
 
 namespace Services
 {
-    public interface IUsersService
+    public interface IUserService
     {
-        User? SignUp(User user);
-
-        User? Login(UserLogIn loginUser);
-
-        User? Update(int id, User updatedUser);
-
-        User? GetById(int id);
-
-        int CheckPassword(string password);
+        Task<User> AddUser(User user);
+        Task<User> GetUserById(int id);
+        Task<User> Login(UserLogIn loginUser);
+        Task<User> UpdateUser(int id, User user);
+        int ValidatePassword(string password);
     }
 }

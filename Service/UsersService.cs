@@ -3,46 +3,43 @@ using Repositories;
 
 namespace Services
 {
-    public class UsersService : IUsersService
+    public class UsersService : IUserService
     {
-        private readonly IUsersRepository _repository;
-
+        private readonly IUsersRepository repository;
         public UsersService(IUsersRepository repository)
         {
-            _repository = repository;
+            this.repository = repository;
+        }
+        public async Task<User> GetUserById(int id)
+        {
+            return await repository.GetUserById(id);
         }
 
-
-        public User? Login(UserLogIn loginUser)
+        public async Task<User> AddUser(User user)
         {
-            return _repository.Login(loginUser);
-        }
-
-        public User? SignUp(User user)
-        {
-            if (CheckPassword(user.Password) > 2)
-                return _repository.AddUser(user);
-
+            if (ValidatePassword(user.Password) > 2)
+                return await repository.AddUser(user);
             return null;
         }
 
-        public User? Update(int id, User updatedUser)
+        public async Task<User> Login(UserLogIn loginUser)
         {
-            if (CheckPassword(updatedUser.Password) < 2)
+            User user = await repository.GetUserByEmailAndPassword(loginUser);
+            if (user == null)
                 return null;
-
-            return _repository.Update(id, updatedUser);
+            return user;
+        }
+        public async Task<User> UpdateUser(int id, User user)
+        {
+            if (ValidatePassword(user.Password) < 3)
+                return null;
+            return await repository.UpdateUser(id, user);
         }
 
-        public User? GetById(int id)
+        public int ValidatePassword(string password)
         {
-            return _repository.GetUserById(id);
-        }
-
-        public int CheckPassword(string password)
-        {
-            var result = Zxcvbn.Core.EvaluatePassword(password);
-            return result.Score;
+            int result = Zxcvbn.Core.EvaluatePassword(password).Score;
+            return result;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿
 using Entity;
+using Microsoft.EntityFrameworkCore;
 using Repository;
 using System.Text.Json;
 
@@ -14,50 +15,35 @@ namespace Repositories
             _dbContext = dbContext;
         }
 
-        public User? GetUserById(int id)
+        public async Task<IEnumerable<User>> GetUsers()
         {
-            return _dbContext.Users.FirstOrDefault(u => u.Id == id);
+            return await _dbContext.Users.ToListAsync();
         }
 
-        public User? AddUser(User user)
+        public async Task<User> GetUserById(int id)
         {
-            _dbContext.Users.Add(user);
-            _dbContext.SaveChanges();
+            return await _dbContext.Users.FindAsync(id);
+        }
+
+        public async Task<User> AddUser(User user)
+        {
+            await _dbContext.Users.AddAsync(user);
+            await _dbContext.SaveChangesAsync();
             return user;
         }
 
-        public User? Login(UserLogIn loginUser)
+        public async Task<User> UpdateUser(int id, User userToUpdate)
         {
-            return _dbContext.Users.FirstOrDefault(u =>
-                u.Email == loginUser.Email &&
-                u.Password == loginUser.Password);
+            userToUpdate.Id = id;
+            _dbContext.Users.Update(userToUpdate);
+            await _dbContext.SaveChangesAsync();
+            return userToUpdate;
         }
 
-        public User? Update(int id, User updatedUser)
+        public async Task<User> GetUserByEmailAndPassword(UserLogIn loginUser)
         {
-            User? user = _dbContext.Users.FirstOrDefault(u => u.Id == id);
+            return await _dbContext.Users.Where(user => user.Email == loginUser.Email && user.Password == loginUser.Password).FirstOrDefaultAsync();
 
-            if (user == null)
-                return null;
-
-            user.FirstName = updatedUser.FirstName;
-            user.LastName = updatedUser.LastName;
-            user.Email = updatedUser.Email;
-            user.Password = updatedUser.Password;
-
-            _dbContext.SaveChanges();
-            return user;
-        }
-
-        public void Delete(int id)
-        {
-            User? user = _dbContext.Users.FirstOrDefault(u => u.Id == id);
-
-            if (user != null)
-            {
-                _dbContext.Users.Remove(user);
-                _dbContext.SaveChanges();
-            }
         }
     }
 }

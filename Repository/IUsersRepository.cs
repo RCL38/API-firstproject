@@ -8,10 +8,10 @@ namespace Repositories
 {
     public interface IUsersRepository
     {
-        User? GetUserById(int id);
-        User? AddUser(User user);
-        User? Login(UserLogIn loginUser);
-        User? Update(int id, User updatedUser);
-        void Delete(int id);
+        Task<IEnumerable<User>> GetUsers();
+        Task<User> AddUser(User user);
+        Task<User> GetUserByEmailAndPassword(UserLogIn loginUser);
+        Task<User> GetUserById(int id);
+        Task<User> UpdateUser(int id, User userToUpdate);
     }
 }

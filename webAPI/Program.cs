@@ -11,7 +11,7 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<storeDBContext>(options =>
     options.UseSqlServer("Server=localhost\\SQLEXPRESS;Database=storeDB;Trusted_Connection=True;TrustServerCertificate=True;"));
 builder.Services.AddTransient<IUsersRepository, UsersRepository>();
-builder.Services.AddTransient<IUsersService, UsersService>();
+builder.Services.AddTransient<IUserService, UsersService>();
 
 var app = builder.Build();
 
